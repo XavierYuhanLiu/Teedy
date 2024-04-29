@@ -9,6 +9,10 @@ pipeline {
         stage('pmd'){
             steps {
                 sh 'mvn pmd:pmd'
+            }
+        }
+        stage('javadoc'){
+            steps {
                 sh 'mvn site --fail-never'
             }
         }
