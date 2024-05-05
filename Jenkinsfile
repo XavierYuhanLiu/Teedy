@@ -4,6 +4,11 @@ pipeline {
         stage('Build'){
             steps {
                 sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('PMD'){
+            steps {
+                sh 'mvn clean install -U'
                 sh 'mvn pmd:pmd'
             }
         }
