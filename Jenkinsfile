@@ -8,6 +8,7 @@ pipeline {
         }
         stage('PMDandJavadocandSurefire'){
             steps {
+                sh 'mvn clean install -U'
                 sh 'mvn pmd:pmd'
                 sh 'mvn site --fail-never'
                 sh 'mvn javadoc:javadoc'
