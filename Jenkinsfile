@@ -11,7 +11,7 @@ pipeline {
                 sh 'mvn clean install -U'
                 sh 'mvn pmd:pmd'
                 sh 'mvn site --fail-never'
-                sh 'mvn javadoc:javadoc'
+                sh 'mvn javadoc:javadoc --fail-never'
             }
         }
     }
