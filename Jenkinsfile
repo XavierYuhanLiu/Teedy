@@ -6,15 +6,15 @@ pipeline {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('PMDAndSureFire'){
+        stage('InstallAndTest'){
             steps {
                 sh 'mvn clean install -U'
-                sh 'mvn pmd:pmd'
                 sh 'mvn test'
             }
         }
-        stage('javadoc'){
+        stage('PMDandJavadocandSurefire'){
             steps {
+                sh 'mvn pmd:pmd'
                 sh 'mvn site --fail-never'
             }
         }
