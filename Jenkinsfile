@@ -25,6 +25,7 @@ pipeline {
         stage('Javadoc'){
             steps {
                 sh 'mvn site --fail-never'
+                sh 'mvn javadoc:javadoc --fail-never'
                 sh 'mvn javadoc:jar --fail-never'
             }
         }
