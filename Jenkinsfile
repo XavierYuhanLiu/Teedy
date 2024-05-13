@@ -1,34 +1,30 @@
 pipeline {
     agent any
     stages{
-        stage('Build'){
+        stage('Package'){
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
-        stage('Test'){
+        stage('Build Docket'){
             steps {
-                sh 'mvn test'
+                sh 'docker build -t teedy .'
             }
         }
-        stage('PMD'){
+        stage('Upload DockerHub') {
             steps {
-                sh 'mvn clean install -U'
-                sh 'mvn pmd:pmd'
+                sh 'docker tag teedy xavieryuhanliu/teedy'
+                sh 'docker push xavieryuhanliu/teedy'
             }
         }
-        stage('Surfire'){
+        stage('Run') {
             steps {
-                sh 'mvn surefire-report:report'
+                sh 'docker run -d -p 8082:8080 teedy'
+                sh 'docker run -d -p 8083:8080 teedy'
+                sh 'docker run -d -p 8084:8080 teedy'
             }
         }
-        stage('Javadoc'){
-            steps {
-                sh 'mvn site --fail-never'
-                sh 'mvn javadoc:javadoc --fail-never'
-                sh 'mvn javadoc:jar --fail-never'
-            }
-        }
+
     }
 
     post {
