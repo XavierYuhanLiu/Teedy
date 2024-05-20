@@ -11,6 +11,12 @@ pipeline {
                 git 'https://github.com/XavierYuhanLiu/Teedy.git'
             }
         }
+        stage('Package'){
+            steps {
+                sh 'mvn -B -DskipTests clean package'
+
+            }
+        }
         stage('Building our image') {
             steps{
                 script {
