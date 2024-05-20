@@ -6,37 +6,29 @@ pipeline {
     }
     agent any
     stages {
-        stage('Cloning our Git') {
-            steps {
-                git 'https://github.com/XavierYuhanLiu/Teedy.git'
-            }
-        }
         stage('Package'){
             steps {
                 sh 'mvn -B -DskipTests clean package'
+            }
+        }
+        stage('Build Docket'){
+            steps {
+                sh 'docker build -t teedy .'
+            }
+        }
+        stage('Upload DockerHub') {
+            steps {
+                sh 'docker tag teedy xavieryuhanliu/teedy'
+                sh 'docker push xavieryuhanliu/teedy'
+            }
+        }
+        stage('Run') {
+            steps {
+                sh 'docker run -d -p 8082:8080 teedy'
+                sh 'docker run -d -p 8083:8080 teedy'
+                sh 'docker run -d -p 8084:8080 teedy'
+            }
+        }
 
-            }
-        }
-        stage('Building our image') {
-            steps{
-                script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
-                }
-            }
-        }
-        stage('Deploy our image') {
-            steps{
-                script {
-                    docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-                        dockerImage.push()
-                    }
-                }
-            }
-        }
-        stage('Cleaning up') {
-            steps{
-                sh "docker rmi $registry:$BUILD_NUMBER"
-            }
-        }
     }
 }
