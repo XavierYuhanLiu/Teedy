@@ -1,32 +1,36 @@
 pipeline {
-    agent any
-    stages{
-        stage('Build Docker'){
-            steps {
-                sh 'docker build -t teedy .'
-            }
-        }
-        stage('Upload DockerHub') {
-            steps {
-                sh 'docker tag teedy xavieryuhanliu/teedy'
-                sh 'docker push xavieryuhanliu/teedy'
-            }
-        }
-        stage('Run') {
-            steps {
-                sh 'docker run -d -p 8082:8080 teedy'
-                sh 'docker run -d -p 8083:8080 teedy'
-                sh 'docker run -d -p 8084:8080 teedy'
-            }
-        }
-
+    environment {
+        registry = "xavieryuhanliu/teedylab"
+        registryCredential = 'dockerhub_id'
+        dockerImage = ''
     }
-
-    post {
-        always{
-            archiveArtifacts artifacts: '**/target/site/**', fingerprint: true
-            archiveArtifacts artifacts: '**/target/**/*.jar', fingerprint: true
-            archiveArtifacts artifacts: '**/target/**/*.war', fingerprint: true
+    agent any
+    stages {
+        stage('Cloning our Git') {
+            steps {
+                git 'https://github.com/YourGithubAccount/YourGithubRepository.git'
+            }
+        }
+        stage('Building our image') {
+            steps{
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER"
+                }
+            }
+        }
+        stage('Deploy our image') {
+            steps{
+                script {
+                    docker.withRegistry( '', registryCredential ) {
+                        dockerImage.push()
+                    }
+                }
+            }
+        }
+        stage('Cleaning up') {
+            steps{
+                sh "docker rmi $registry:$BUILD_NUMBER"
+            }
         }
     }
 }
