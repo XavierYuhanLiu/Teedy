@@ -24,9 +24,9 @@ pipeline {
         }
         stage('Run') {
             steps {
-                sh 'docker run -d -p 8082:8080 teedy'
-                sh 'docker run -d -p 8083:8080 teedy'
-                sh 'docker run -d -p 8084:8080 teedy'
+                sh 'docker run -d -p 8082:8080 xavieryuhanliu/teedy'
+                sh 'docker run -d -p 8083:8080 xavieryuhanliu/teedy'
+                sh 'docker run -d -p 8084:8080 xavieryuhanliu/teedy'
             }
         }
 
